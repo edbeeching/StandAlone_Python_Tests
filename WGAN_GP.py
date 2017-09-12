@@ -5,16 +5,16 @@ Created on Mon Sep 11 09:04:16 2017
 @author: Edward
 """
 import numpy as np
-import matplotlib.pyplot as plt
 
 from keras.models import Model
 from keras.layers import Input, Dense
 from keras.layers.merge import _Merge
+from keras.optimizers import Adam
 import keras.backend as K
 from functools import partial
 # Data generation
-BATCH_SIZE = 1
-GRADIENT_PENALTY_WEIGHT = 10.0
+BATCH_SIZE = 16
+GRADIENT_PENALTY_WEIGHT = 1000.0
 
 
 def eight_gaussians(num, scale):
@@ -54,9 +54,11 @@ def gradient_penalty_loss(y_true, y_pred, average_samples, weight):
 def make_generator():
     # Create the generator
     gen_input = Input(shape=(100,))
-    x = Dense(40, activation='relu')(gen_input)
-    x = Dense(40, activation='relu')(x)
-    x = Dense(40, activation='relu')(x)
+    x = Dense(100, activation='relu')(gen_input)
+    x = Dense(100, activation='relu')(x)
+    x = Dense(100, activation='relu')(x)
+    x = Dense(100, activation='relu')(x)
+    x = Dense(100, activation='relu')(x)
     gen_output = Dense(2, activation='linear')(x)
     
     generator = Model(gen_input, gen_output)
@@ -89,7 +91,7 @@ def make_gan(generator, critic):
 
     gan = Model(gen_input, critic_out)
 
-    gan.compile(optimizer='adam', loss = wasserstein_loss)
+    gan.compile(optimizer=Adam(0.0001, beta_1=0.5, beta_2=0.9), loss = wasserstein_loss)
     gan.summary()
       
     critic.trainable = True
@@ -105,7 +107,7 @@ def make_gan(generator, critic):
 
 class RandomWeightedAverage(_Merge):
     def _merge_function(self, inputs):
-        weights = K.random_uniform((BATCH_SIZE, 1,1,1))
+        weights = K.random_uniform((BATCH_SIZE, 1))
         return (weights*inputs[0]) + ((1-weights)*inputs[1])
 
 
@@ -113,11 +115,11 @@ if __name__ == '__main__':
     
     generator = make_generator()
     critic = make_critic()
-    generator.compile(optimizer='adam', loss=wasserstein_loss)
-    gan = make_gan(generator, critic)
     
+    gan = make_gan(generator, critic)
+    generator.compile(optimizer=Adam(0.0001, beta_1=0.5, beta_2=0.9), loss=wasserstein_loss)
     # Get some real data
-    real_data = eight_gaussians(1000, 0.1)
+    real_data = eight_gaussians(1000, 0.01)
     
     # Set up the discriminator model
     
@@ -175,11 +177,14 @@ if __name__ == '__main__':
 
 
 
-    xx = generator.predict(np.random.uniform(size=(100, 100)))
+    xx = generator.predict(np.random.uniform(size=(1000, 100)))
 
+    import matplotlib.pyplot as plt
+    plt.figure()
+    plt.subplot(1,2,1)
+    plt.scatter(real_data[:,0], real_data[:,1])
 
-
-
-
-
+    plt.subplot(1,2,2)
+    plt.scatter(xx[:,0], xx[:,1])
+    plt.show()
 
