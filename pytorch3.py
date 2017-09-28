@@ -10,7 +10,8 @@ import numpy as np
 from keras.datasets import mnist
 from keras.utils import to_categorical
 
-from torch.nn import Conv2d, Module, Linear, CrossEntropyLoss
+
+from torch.nn import Conv2d, Module, Linear, CrossEntropyLoss, NLLLoss
 from torch.nn.functional import max_pool2d, relu, softmax
 from torch import Tensor
 from torch.autograd import Variable
