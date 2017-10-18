@@ -21,10 +21,6 @@ def discrete_fourier_transform(data):
     num_samples = len(data)
     
     result = np.zeros((num_samples,), dtype='complex')
-
-#    for k in range(num_samples):
-#        for jj in range(num_samples):
-#            result[k] += data[j] *((np.cos(2*np.pi / num_samples) - np.imag(np.sin(2*np.pi / num_samples)))**(k*j))
     
     for k in range(num_samples):
         for jj in range(num_samples):
