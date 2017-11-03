@@ -32,7 +32,7 @@ for i, neurons in enumerate(num_neurons):
     model.compile(loss='mse', optimizer='adam', metrics=['mse'])
     model.summary()
 
-    model.fit(Xtrain, Ytrain, epochs=400)
+    model.fit(Xtrain, Ytrain, epochs=500)
 
     Ypreds = model.predict(X) 
     plt.plot(X,Y)
