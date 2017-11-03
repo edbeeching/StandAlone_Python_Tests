@@ -7,18 +7,22 @@ Created on Fri Nov  3 20:32:03 2017
 
 from scipy.misc import imread, imsave
 import numpy as np
+
 maze_image = imread('DNs_2URW4AcizsC.jpg')[15:716,19:721,0] < 200
 maze_image = np.vstack([maze_image[0:601,:],maze_image[600:,:]])
+# I create a boolean array to select off the cells in the maze
 logical = np.zeros((maze_image.shape[1]))
 logical[0] = 1
 logical[11::10] = 1
 logical[6::10] = 1
 
+# create the reduced size image
 reduced_size = maze_image[:,logical>0.0]
 reduced_size = reduced_size[logical>0.0,:]
 
 
 def create_node(mini_mat,i,j):
+    # given a 3x3 matrix this function creates graph edges to the neighbours
     neighbours = []
     
     if mini_mat[0,1] == False:
@@ -32,15 +36,18 @@ def create_node(mini_mat,i,j):
     
     return neighbours
 
+# go through all the cells in the maze to create the graph
 nodes = {}
 for i in range(0,70):
     for j in range(0,70):
         mini = reduced_size[2*i:(2*i)+3,2*j:(2*j)+3]
         nodes[(i,j)] = (create_node(mini, i , j),(i,j))
 
+# start is top left, end is bottom right
 start = (0,0)        
 target = (69,69)
 
+# use a priority queue to graph seach with Dijkstra 
 from queue import PriorityQueue
 q = PriorityQueue()
 
@@ -63,7 +70,8 @@ while searching and not q.empty():
                 q.put((distance+1,(nodes[child])))
                 parents[child] = parent               
                 visited.add(child)
-    
+                
+# Get the path
 current = target
 path = []
 while True:
@@ -76,6 +84,7 @@ while True:
 #original_image = imread('DNs_2URW4AcizsC.jpg')[:,:,0] < 200
 #original_image.dtype = 'int8'
 
+# update the reduced image with the path
 reduced_size.dtype = 'int8'
 for i in range(len(path)-1):
     (start_i, start_j) = path[i]
@@ -86,5 +95,5 @@ for i in range(len(path)-1):
     
     reduced_size[(2*start_i)+1:(2*end_i)+2,(2*start_j)+1:(2*end_j)+2] = 2
     
-
-imsave('DNs_2URW4AcizsC_solved.jpg', reduced_size) # This is a smaller version but you get the idea
+    
+imsave('DNs_2URW4AcizsC_solved.jpg', reduced_size) # This is a smaller version of original image but you get the idea
