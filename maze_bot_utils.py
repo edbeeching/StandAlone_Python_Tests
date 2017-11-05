@@ -14,11 +14,6 @@ def try_and_solve(tweet):
     maze_url = tweet['entities']['media'][0]['media_url']
     return solve_maze(maze_url)
 
-
-
-
-
-
 def solve_maze(url):
         
     maze_image = np.array(Image.open(requests.get(url, stream=True).raw))
@@ -114,6 +109,4 @@ def solve_maze(url):
     base = url.split('/')[-1]
     imsave('solved_mazes/'+base[:-4]+'sol.jpg', reduced_size) # This is a smaller version of original image but you get the idea
     return base[:-4]+'sol.jpg'
-    
-    
     
