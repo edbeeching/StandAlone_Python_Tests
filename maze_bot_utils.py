@@ -7,7 +7,8 @@ Created on Sun Nov  5 21:03:37 2017
 from scipy.misc import imsave
 import numpy as np
 from PIL import Image
-import requests
+import urllib.request
+import io
 
 def try_and_solve(tweet):
     
@@ -16,7 +17,10 @@ def try_and_solve(tweet):
 
 def solve_maze(url):
         
-    maze_image = np.array(Image.open(requests.get(url, stream=True).raw))
+    with urllib.request.urlopen(url) as open_url:
+        f = io.BytesIO(open_url.read())
+        
+    maze_image = np.array(Image.open(f))
     
     maze_image = maze_image[15:716,19:721,0] < 200
     maze_image = np.vstack([maze_image[0:601,:],maze_image[600:,:]])

@@ -31,10 +31,11 @@ while True:
         
         for tweet in user_timeline:
             if "Today's maze" in tweet['text']:
+                print(tweet['text'])
                 try:   
                     maze_jpgname = tweet['entities']['media'][0]['media_url'].split('/')[-1]
                     if maze_jpgname in solved_mazes:
-                        print(maze_jpgname, 'is already solved')
+                        #print(maze_jpgname, 'is already solved')
                         continue
                     
                     print('trying to solve',tweet['entities']['media'][0]['media_url'])
@@ -51,5 +52,5 @@ while True:
     except Exception as e:
         print('Timeline exception',e)
                         
-    time.sleep(10.0)
+    time.sleep(60.0)
             
