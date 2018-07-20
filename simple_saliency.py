@@ -92,7 +92,7 @@ def get_salency(model, image, layer=-2, index=None):
     return upscaled
 
 model = torchvision.models.vgg19(pretrained=True).eval()
-image = resize(imread('cat.jpeg'), (224,224))
+image = resize(imread('cat.jpg'), (224,224))
 
 saliency = get_salency(model, image)
 
